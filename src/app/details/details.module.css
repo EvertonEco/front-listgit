@@ -1,0 +1,181 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    width: auto;
+  }
+  
+  .backButton {
+    position: absolute;
+    top: 10rem;
+    left: 20rem;
+    background-color: transparent;
+    border: none;  
+  }
+
+  .backButton button::after {
+    content: attr();
+  }
+
+  .backButton svg {
+    background-color: transparent;
+    color: transparent;
+    cursor: pointer;
+  }
+  
+  .logoutButton {
+    position: absolute;
+    top: 10rem;
+    right: 20rem;
+    border: none;
+  }
+
+  .logoutButton button[title]:hover:after {
+    content: attr(title);
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1;
+    opacity: 0.9;
+  }
+
+  .logoutButton svg{
+    background-color: transparent;
+    color: transparent;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .container_wrapper {
+    gap: 2rem;
+    height: 70%;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .detailsRectangle {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+    /* background-color: #f0f0f0; */
+    padding: 20px;
+    color: black;
+  }
+
+  .detailsRectangle svg {
+    cursor: pointer;
+  }
+
+  .detailsRectangle svg[title]:hover:after{
+    content: attr(title);
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1;
+    opacity: 0.9;
+  }
+  
+  
+  .avatarContainer {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    background-color: bisque;
+  }
+  
+  .avatar {
+    width: 100%;
+    height: auto;
+  }
+  
+  .userInfo {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .userStats {
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid grey;
+    border-radius: 3px;
+    padding: 1rem 3rem;
+    gap: 1rem;
+  }
+
+  .userStats p {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .userStats p svg {
+    margin-left: 10px;
+  }
+
+  .bio {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: row;
+    padding: 10px;
+    
+    width: 70%;
+    height: 30%;
+    border: 1px solid grey;
+    border-radius: 5px;;
+  }
+
+  .socials {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 10px;
+    
+    width: 70%;
+    height: 15%;
+    border: 1px solid grey;
+    border-radius: 5px;
+  }
+
+  .detailsSocials {
+    display: flex;  
+    flex-direction: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .avatarContainer {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+  
+  .avatarContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
