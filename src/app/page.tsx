@@ -29,15 +29,14 @@ export default function Login() {
     setUser(JSON.stringify(data, null, 2))
     try {
       const response = await axios.post('http://localhost:3001/login', data);
-
       localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('emailUser2', data.email)
+      localStorage.setItem('idUser', response.data.id);
     } catch (error) {
       console.error('Erro no login:', error);
     }
 
     if (typeof window !== 'undefined') {
-      router.push('/search');
+      router.push('/pokeHome');
     }
   }, []);
 

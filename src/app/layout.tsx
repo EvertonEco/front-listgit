@@ -19,7 +19,6 @@ export default function RootLayout({
       <body style={{
         padding: 0,
         margin: 0,
-        backgroundColor: '#ecf0f1',
       }}>
         {isPublicPage && children}  
         {!isPublicPage && <PrivateRoute>{children}</PrivateRoute>}  

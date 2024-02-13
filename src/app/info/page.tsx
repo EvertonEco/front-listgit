@@ -1,68 +1,62 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { IoMdExit } from 'react-icons/io';
-import styles from './info.module.css';
+import styles from './history.module.css';
 import { BiSearchAlt } from 'react-icons/bi';
 import Link from 'next/link';
+import axios from 'axios';
 
-interface ResultSearch {
-  name: string;
-  description: string;
-  language: string | null;
-  updated_at: string;
+interface HistoryProps {
+  searchTerm: string;
+  timestamp: string;
+  userName?: string;
+  found: boolean;
+  reposCount?: number;
 }
 
-interface LastResult {
-    searchTerm: string;
-    timestamp: string;
-    userName?: string;
-    found: boolean;
-    reposCount?: number;
+interface UserData {
+  id: string;
+  email: string;
+  password: string;
+  userName: string;
 }
+
 
 const UserDetails: React.FC = () => {
-  const [resultSearch, setResultSearch] = useState<ResultSearch[] | null>(null);
-  const [lastSearch, setLastSearch] = useState<LastResult | null>(null);
+  const [history, setHistory] = useState<HistoryProps[] | null>(null);
+  const [nameUser, setNameUser] = useState<UserData | null>(null)
 
   useEffect(() => {
-    const resultSearchString = localStorage.getItem('result_search');
     const searchHistoryString = localStorage.getItem('searchHistory');
-
-    if (resultSearchString) {
-      const resultSearchData: ResultSearch[] = JSON.parse(resultSearchString);
-      setResultSearch(resultSearchData);
-    }
+    const emailUser = localStorage.getItem('emailUser2');
+    const accessToken = localStorage.getItem('access_token');
 
     if (searchHistoryString) {
-      const searchHistoryData = JSON.parse(searchHistoryString);
-  
-      const ultimoObjeto = searchHistoryData[searchHistoryData.length - 1];
-  
-      setLastSearch(ultimoObjeto);
+      const searchHistoryData: HistoryProps[] = JSON.parse(searchHistoryString);
+
+      setHistory(searchHistoryData);
+    }
+
+    if (emailUser && accessToken) {
+      axios.post('http://localhost:3001/user/find', { email: emailUser }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then(response => {
+          setNameUser(response.data);
+        })
+        .catch(error => {
+          console.error('Erro na requisição:', error);
+        });
     }
   }, []);
-
-  function formatarData(timestamp: string): string {
-    const data = new Date(timestamp);
-    const dia = data.getDate();
-    const mes = data.getMonth() + 1; // Os meses começam do zero
-    const ano = data.getFullYear();
-  
-    return `${dia}/${mes}/${ano}`;
-  }
 
   return (
     <div className={styles.container}>
       <div className={styles.title}>
-        <div className={styles.infoUserContainer}>
-          <div className={styles.infoUser}>
-            <p><b>Repositórios do usuário</b> {lastSearch?.searchTerm}</p>
-            <Link href={'/details'}>
-              <IoMdExit size={25}/>
-            </Link>
-          </div>
-          <p>Total encontrados: {resultSearch?.length}</p>
+        <div className={styles.infoUser}>
+          Total pesquisados: {history?.length ?? 0}
         </div>
         <div className={styles.iconContainer}>
           <Link href={'/search'}>
@@ -70,18 +64,37 @@ const UserDetails: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className={styles.list}>
-        {resultSearch &&
-          resultSearch.slice(0, 20).map((item: ResultSearch, index: number) => (
+      <div className={styles.mediumRectangles}>
+      {history &&
+        history.map((item, index) => {
+          const timestampDate = new Date(item.timestamp);
+          const formattedTime = `${timestampDate.getHours()}:${String(timestampDate.getMinutes()).padStart(2, '0')}`;
+        
+          return (
             <div key={index} className={styles.rectangle}>
-              <p className={styles.name}>{item.name}</p>
-              <p className={styles.description}>{item.description}</p>
-              <div className={styles.languageUpdatedAt}>
-                <p>{item.language}</p>
-                <p>{formatarData(item.updated_at)}</p>
-              </div>
+              <Link href={`/details?searchTerm=${nameUser?.userName}`}>
+                <h2>{item?.searchTerm}</h2>
+              </Link>
+              <p>Pesquisado às {formattedTime} com <b>{item.found ? 'sucesso' : 'falha'}</b></p>
+              <Link href={`/info?searchTerm=${item.searchTerm}`}>
+                <p>Total de repositórios encontrados: {item.reposCount}</p>
+              </Link>
+              <button
+                className={styles.delete}
+                onClick={() => {
+                  const updatedHistory = [...history];
+                  updatedHistory.splice(index, 1);
+                  localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+                  setHistory(updatedHistory);
+                  window.location.reload();
+                }}
+              >
+                Excluir
+              </button>
             </div>
-        ))}
+          );
+        })
+      }
       </div>
     </div>
   );
