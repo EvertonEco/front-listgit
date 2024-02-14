@@ -13,36 +13,95 @@ interface Pokemon {
   types: string[];
   imageUrl: string;
   color: string;
+  captureDate: string; // Adiciona a propriedade captureDate ao tipo Pokemon
 }
 
 
 const UserDetails: React.FC = () => {
   const [favoritePokemons, setFavoritePokemons] = useState<Pokemon[]>([]);
+  const [sortedPokemons, setSortedPokemons] = useState<Pokemon[]>([]);
 
   useEffect(() => {
-    const userId = localStorage.getItem('idUser');
-    if (!userId) {
-      console.error('idUser não encontrado no localStorage');
-      return;
-    }
-
-    const fetchFavoritePokemons = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/pokemon/${userId}/favorites`);
-        setFavoritePokemons(response.data);
-      } catch (error) {
-        console.error('Erro ao obter os pokémons favoritos:', error);
-      }
-    };
-
     fetchFavoritePokemons();
   }, []);
 
-  const handleEditPokemonName = (pokemonId: number) => {
+  useEffect(() => {
+    setSortedPokemons([...favoritePokemons]);
+  }, [favoritePokemons]);
+
+  const fetchFavoritePokemons = async () => {
+    try {
+      const userId = localStorage.getItem('idUser');
+      if (!userId) {
+        console.error('idUser não encontrado no localStorage');
+        return;
+      }
+      const response = await axios.get(`http://localhost:3001/pokemon/${userId}/favorites`);
+      setFavoritePokemons(response.data);
+    } catch (error) {
+      console.error('Erro ao obter os pokémons favoritos:', error);
+    }
+  };
+
+  const handleEditPokemonName = async (pokemonId: number) => {
     const newName = prompt('Digite o novo nome do Pokémon:');
     if (newName) {
-      // Lógica para editar o nome do Pokémon aqui
+      try {
+        const userId = localStorage.getItem('idUser');
+        if (!userId) {
+          console.error('idUser não encontrado no localStorage');
+          return;
+        }
+        await axios.patch(`http://localhost:3001/pokemon/${pokemonId}/${userId}/edit`, { newName });
+        const updatedPokemons = favoritePokemons.map(pokemon =>
+          pokemon.id === pokemonId ? { ...pokemon, name: newName } : pokemon
+        );
+        setFavoritePokemons(updatedPokemons);
+      } catch (error) {
+        console.error('Erro ao editar o nome do Pokémon:', error);
+      }
     }
+  };
+
+  const sortPokemonsByType = async () => {
+    try {
+      const userId = localStorage.getItem('idUser');
+      if (!userId) {
+        console.error('idUser não encontrado no localStorage');
+        return;
+      }
+      const response = await axios.get(`http://localhost:3001/pokemon/${userId}/favorites/capture`);
+      setFavoritePokemons(response.data);
+    } catch (error) {
+      console.error('Erro ao ordenar os pokémons por tipo:', error);
+    }
+  };
+
+  const sortPokemonsByName = async () => {
+    try {
+      const userId = localStorage.getItem('idUser');
+      if (!userId) {
+        console.error('idUser não encontrado no localStorage');
+        return;
+      }
+      const response = await axios.get(`http://localhost:3001/pokemon/${userId}/favorites/alphabetical`);
+      setFavoritePokemons(response.data);
+    } catch (error) {
+      console.error('Erro ao ordenar os pokémons por nome:', error);
+    }
+  };
+
+  const sortPokemonsByAlphabeticalAndCaptureDate = () => {
+    const sortedPokemons = [...favoritePokemons];
+    sortedPokemons.sort((a, b) => {
+      // Ordenar por ordem alfabética
+      const nameComparison = a.name.localeCompare(b.name);
+      if (nameComparison !== 0) {
+        return nameComparison;
+      }
+      return new Date(a.captureDate).getTime() - new Date(b.captureDate).getTime();
+    });
+    setFavoritePokemons(sortedPokemons);
   };
 
   return (
@@ -50,9 +109,14 @@ const UserDetails: React.FC = () => {
       <div className={styles.wrapper}>
         <Link href="/pokeHome" className={styles.backButton}>
           <FaArrowLeft />
-          Voltar
+          <p>Voltar</p>
         </Link>
         <h1>Meus pokemons favoritos</h1>
+        <div className={styles.buttonsFilter}>
+          <button className={styles.button} onClick={sortPokemonsByType}>Ordenar por order alfabética</button>
+          <button className={styles.button} onClick={sortPokemonsByName}>Ordenar por data de captura</button>
+          <button className={styles.button} onClick={sortPokemonsByAlphabeticalAndCaptureDate}>Ordenar por data de captura e por ordem alfabética</button>
+        </div>
         <div className={styles.containerPokedex}>
           {favoritePokemons.length === 0 ? (
             <p className={styles.nonePoke}>Você ainda não capturou nenhum pokemon.</p>

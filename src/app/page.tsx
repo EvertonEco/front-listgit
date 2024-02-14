@@ -49,14 +49,14 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.wrapper}>
       <div className={styles.buttonsForm}>
-        <button onClick={() => handleFormChange('signin')} id="btnSignin">
-          Sign in
+        <button className={styles.button} onClick={() => handleFormChange('signin')} id="btnSignin">
+          Sign In
         </button>
-        <button onClick={() => handleFormChange('signup')} id="btnSignup">
-          Sign up
+        <button className={styles.button} onClick={() => handleFormChange('signup')} id="btnSignup">
+          Sign Up
         </button>
       </div>
-
+      <div>
       {activeForm === 'signin' && (
         <form autoComplete="off" className={styles.form} id="signin" onSubmit={handleSubmit(handleSigninSubmit)}>
           <input 
@@ -78,7 +78,7 @@ export default function Login() {
           />
           <i className="fas fa-lock iPassword" id='root'></i>
           <button className={styles.submit} type="submit">
-            Sign in 
+            Sign In 
           </button>
         </form>
       )}
@@ -106,17 +106,26 @@ export default function Login() {
           <input 
             className={styles.input} 
             type="userName" 
-            placeholder="userName" 
+            placeholder="Name" 
             required 
             {...register('userName')}
             autoComplete="off"
           />
+          <input 
+            className={styles.input} 
+            type="text" 
+            placeholder="Address" 
+            required 
+            {...register('address')}
+            autoComplete="off"
+          />
           <i className="fas fa-lock iPassword2" id='root'></i>
           <button className={styles.submit} type="submit">
-            Sign up
+            Sign Up
           </button>
         </form>
       )}
+      </div>
       </div>
     </div>
   );

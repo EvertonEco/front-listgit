@@ -1,16 +1,10 @@
 export const APP_ROUTES = {
     private: {
-        info: {
-            name: '/info'
+        pokehome: {
+            name: '/pokeHome'
         },
-        search: {
+        favoritepoke: {
             name: '/search'
-        },
-        search_history: {
-            name: '/search-history'
-        },
-        user_details: {
-            name: '/user-details'
         },
         // info: {
         //     name: '/info'

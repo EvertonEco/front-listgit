@@ -14,24 +14,27 @@ const PrivateRoute = ({ children }: PriveteRoutesProps) => {
     const { push } = useRouter();
 
     const isUserAuthenticated = () => {
-        const accessToken = localStorage.getItem('access_token');
-        return !!accessToken;
-      };
+        if (typeof window !== 'undefined') {
+            const accessToken = localStorage.getItem('access_token');
+            return !!accessToken;
+        }
+        return false;
+    };
 
-      const isAuthenticated = isUserAuthenticated();
+    const isAuthenticated = isUserAuthenticated();
     
     useEffect(() => {
-        if(!isUserAuthenticated) {
-            push(APP_ROUTES.public.login)
+        if(!isAuthenticated) {
+            push(APP_ROUTES.public.login);
         }
-    }, [isUserAuthenticated, push]);
+    }, [isAuthenticated, push]);
 
     return (
         <>
             {!isAuthenticated && <Error />}
             {isAuthenticated && children}
         </>
-    )
+    );
 }
 
 export default PrivateRoute;
